@@ -68,14 +68,17 @@ export default function GameControls() {
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
     display: 'flex',
-    gap: '12px',
+    gap: '10px',
     flexWrap: 'wrap' as const,
     justifyContent: 'center',
     marginTop: '8px',
+    width: '100%',
+    maxWidth: '480px',
+    boxSizing: 'border-box' as const,
   },
   btn: {
-    fontSize: '1.2rem',
-    padding: '12px 28px',
+    fontSize: 'clamp(0.9rem, 3vw, 1.2rem)',
+    padding: '10px 20px',
     borderRadius: '20px',
     border: 'none',
     color: '#fff',

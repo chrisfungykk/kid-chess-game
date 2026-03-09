@@ -219,7 +219,7 @@ export default function App() {
           t={t}
         />
 
-        <div style={styles.boardArea}>
+        <div style={styles.goBoardArea}>
           <GoBoard
             board={goGameState.board}
             currentTurn={goGameState.board.currentTurn}
@@ -292,22 +292,30 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
     fontFamily: '"Comic Sans MS", "Chalkboard SE", "Marker Felt", cursive, sans-serif',
     padding: '16px',
+    boxSizing: 'border-box' as const,
     position: 'relative',
   },
   title: {
-    fontSize: '2.5rem',
+    fontSize: 'clamp(1.6rem, 5vw, 2.5rem)',
     color: '#5b2c6f',
     textShadow: '2px 2px 0 #f9e79f',
     margin: '8px 0',
+    textAlign: 'center' as const,
   },
   boardArea: {
+    width: '100%',
+    maxWidth: '480px',
+    aspectRatio: '1',
+    marginBottom: '12px',
+  },
+  goBoardArea: {
     width: '100%',
     maxWidth: '480px',
     marginBottom: '12px',
   },
   langBtn: {
-    fontSize: '1.1rem',
-    padding: '10px 28px',
+    fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
+    padding: '8px 20px',
     borderRadius: '20px',
     border: 'none',
     background: 'linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)',
@@ -319,8 +327,8 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: '12px',
   },
   backBtn: {
-    fontSize: '1rem',
-    padding: '8px 20px',
+    fontSize: 'clamp(0.85rem, 2.8vw, 1rem)',
+    padding: '8px 16px',
     borderRadius: '20px',
     border: 'none',
     background: 'linear-gradient(135deg, #aab7b8 0%, #7f8c8d 100%)',

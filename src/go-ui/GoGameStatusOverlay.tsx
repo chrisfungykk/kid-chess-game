@@ -75,14 +75,15 @@ const styles: Record<string, React.CSSProperties> = {
   modal: {
     background: 'linear-gradient(135deg, #fff9c4 0%, #ffe0b2 100%)',
     borderRadius: '28px',
-    padding: '36px 48px',
+    padding: 'clamp(20px, 4vw, 36px) clamp(16px, 4vw, 48px)',
     textAlign: 'center' as const,
     boxShadow: '0 12px 40px rgba(0, 0, 0, 0.25)',
     maxWidth: '440px',
     width: '90%',
+    boxSizing: 'border-box' as const,
   },
   message: {
-    fontSize: '2rem',
+    fontSize: 'clamp(1.4rem, 4.5vw, 2rem)',
     fontWeight: 'bold',
     color: '#5b2c6f',
     margin: '0 0 20px',
