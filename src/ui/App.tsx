@@ -18,7 +18,21 @@ import HintButton from './HintButton';
 import GameControls from './GameControls';
 import GameStatusOverlay from './GameStatusOverlay';
 
-// --- Game Context ---
+// Go imports
+import { GoBoard, GoGameControls, GoGameStatusOverlay, GameSelector } from '../go-ui';
+import {
+  startNewGoGame,
+  makeGoMove,
+  passGoTurn,
+  resignGoGame,
+  requestGoHint,
+  getGoGameState,
+} from '../go-game';
+import type { GoGameState } from '../go-game/types';
+import type { GoPosition } from '../go-engine/types';
+import { StoneColor, findTerritory } from '../go-engine';
+
+// --- Game Context (Chess) ---
 
 export interface GameContextValue {
   gameState: GameState;
@@ -43,13 +57,25 @@ export function useGameContext(): GameContextValue {
   return ctx;
 }
 
+// --- Selected game type ---
+type SelectedGame = 'none' | 'chess' | 'go';
+
 // --- App Component ---
 
 export default function App() {
+  // Game selector state
+  const [selectedGame, setSelectedGame] = useState<SelectedGame>('none');
+
+  // --- Chess state ---
   const [gameState, setGameState] = useState<GameState>(getGameState);
   const [legalMoves, setLegalMoves] = useState<Move[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<{ row: number; col: number } | null>(null);
   const [activeHint, setActiveHint] = useState<HintResult | null>(null);
+
+  // --- Go state ---
+  const [goGameState, setGoGameState] = useState<GoGameState>(getGoGameState);
+
+  // --- Shared state ---
   const [language, setLang] = useState<string>(getLanguage);
 
   const t = useCallback(
@@ -58,6 +84,13 @@ export default function App() {
     [language],
   );
 
+  const onToggleLanguage = useCallback(() => {
+    const next = getLanguage() === 'en' ? 'zh-TW' : 'en';
+    setLanguage(next);
+    setLang(next);
+  }, []);
+
+  // --- Chess handlers ---
   const onStartGame = useCallback((difficulty: Difficulty) => {
     const state = startNewGame(difficulty);
     setGameState(state);
@@ -99,12 +132,44 @@ export default function App() {
     }
   }, []);
 
-  const onToggleLanguage = useCallback(() => {
-    const next = getLanguage() === 'en' ? 'zh-TW' : 'en';
-    setLanguage(next);
-    setLang(next);
+  // --- Go handlers ---
+  const onGoNewGame = useCallback((difficulty: 'easy' | 'medium', mode: 'vs_ai' | 'vs_player') => {
+    const state = startNewGoGame(difficulty, mode);
+    setGoGameState(state);
   }, []);
 
+  const onGoMove = useCallback((pos: GoPosition) => {
+    const result = makeGoMove(pos);
+    setGoGameState(result.gameState);
+  }, []);
+
+  const onGoPass = useCallback(() => {
+    const result = passGoTurn();
+    setGoGameState(result.gameState);
+  }, []);
+
+  const onGoResign = useCallback(() => {
+    const state = resignGoGame();
+    setGoGameState(state);
+  }, []);
+
+  const onGoHint = useCallback(() => {
+    const state = requestGoHint();
+    setGoGameState(state);
+  }, []);
+
+  // --- Go derived state ---
+  const isGoPlayerTurn =
+    goGameState.mode === 'vs_player'
+      ? true
+      : goGameState.board.currentTurn === StoneColor.BLACK;
+
+  const goTerritoryMap =
+    goGameState.status === 'finished' && goGameState.scoreResult
+      ? findTerritory(goGameState.board)
+      : null;
+
+  // --- Chess context ---
   const contextValue: GameContextValue = {
     gameState,
     legalMoves,
@@ -120,6 +185,72 @@ export default function App() {
     t,
   };
 
+  // --- Game Selector view ---
+  if (selectedGame === 'none') {
+    return (
+      <GameSelector
+        onSelectChess={() => setSelectedGame('chess')}
+        onSelectGo={() => setSelectedGame('go')}
+        t={t}
+        onToggleLanguage={onToggleLanguage}
+      />
+    );
+  }
+
+  // --- Go game view ---
+  if (selectedGame === 'go') {
+    return (
+      <div style={styles.container}>
+        <h1 style={styles.title}>⚫ {t('go.title')} ⚫</h1>
+
+        <GoGameControls
+          gameStatus={goGameState.status}
+          currentTurn={goGameState.board.currentTurn}
+          isPlayerTurn={isGoPlayerTurn}
+          score={goGameState.score}
+          highScore={goGameState.highScore}
+          difficulty={goGameState.difficulty}
+          mode={goGameState.mode}
+          onPass={onGoPass}
+          onResign={onGoResign}
+          onHint={onGoHint}
+          onNewGame={onGoNewGame}
+          onBack={() => setSelectedGame('none')}
+          t={t}
+        />
+
+        <div style={styles.boardArea}>
+          <GoBoard
+            board={goGameState.board}
+            currentTurn={goGameState.board.currentTurn}
+            isPlayerTurn={isGoPlayerTurn}
+            onIntersectionClick={onGoMove}
+            territoryMap={goTerritoryMap}
+            hintPosition={goGameState.lastHint?.position ?? null}
+            gameStatus={goGameState.status}
+          />
+        </div>
+
+        <GoGameStatusOverlay
+          gameStatus={goGameState.status}
+          winner={goGameState.winner}
+          scoreResult={goGameState.scoreResult}
+          t={t}
+        />
+
+        {/* Language toggle */}
+        <button
+          data-testid="language-toggle-btn"
+          style={styles.langBtn}
+          onClick={onToggleLanguage}
+        >
+          🌐 {t('language.toggle')}
+        </button>
+      </div>
+    );
+  }
+
+  // --- Chess game view (default) ---
   return (
     <GameContext.Provider value={contextValue}>
       <div style={styles.container}>
@@ -127,7 +258,6 @@ export default function App() {
 
         <ScoreDisplay />
 
-        {/* Game board area */}
         <div style={styles.boardArea}>
           <ChessBoard />
         </div>
@@ -137,6 +267,15 @@ export default function App() {
         <HintButton />
 
         <GameControls />
+
+        {/* Back to game selector */}
+        <button
+          data-testid="back-to-selector-btn"
+          style={styles.backBtn}
+          onClick={() => setSelectedGame('none')}
+        >
+          ← {t('gameSelector.title')}
+        </button>
       </div>
     </GameContext.Provider>
   );
@@ -169,5 +308,31 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: '12px',
+  },
+  langBtn: {
+    fontSize: '1.1rem',
+    padding: '10px 28px',
+    borderRadius: '20px',
+    border: 'none',
+    background: 'linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)',
+    boxShadow: '0 4px 0 #bdbdbd, 0 6px 12px rgba(0, 0, 0, 0.1)',
+    color: '#2c3e50',
+    cursor: 'pointer',
+    fontFamily: '"Comic Sans MS", "Chalkboard SE", "Marker Felt", cursive, sans-serif',
+    fontWeight: 'bold',
+    marginTop: '12px',
+  },
+  backBtn: {
+    fontSize: '1rem',
+    padding: '8px 20px',
+    borderRadius: '20px',
+    border: 'none',
+    background: 'linear-gradient(135deg, #aab7b8 0%, #7f8c8d 100%)',
+    boxShadow: '0 4px 0 #616a6b, 0 6px 12px rgba(127,140,141,0.3)',
+    color: '#fff',
+    cursor: 'pointer',
+    fontFamily: '"Comic Sans MS", "Chalkboard SE", "Marker Felt", cursive, sans-serif',
+    fontWeight: 'bold',
+    marginTop: '12px',
   },
 };

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
-import { initializeBoard, cloneBoard, getPiece } from './board';
+import { initializeBoard, cloneBoard } from './board';
 import { getLegalMoves, getAllLegalMoves, isSquareAttacked } from './moves';
 import { Color, Board, Move, PieceType } from './types';
 

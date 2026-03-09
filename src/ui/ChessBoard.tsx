@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useGameContext } from './App';
 import Square from './Square';
 import { Position, Color, PieceType } from '../engine/types';

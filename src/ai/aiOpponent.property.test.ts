@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 import { selectMove } from './aiOpponent';
-import { initializeBoard, cloneBoard } from '../engine/board';
+import { initializeBoard } from '../engine/board';
 import { getAllLegalMoves } from '../engine/moves';
 import { simulateMove } from '../engine/execute';
 import { Board, Color, Move } from '../engine/types';

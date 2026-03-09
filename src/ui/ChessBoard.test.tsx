@@ -4,7 +4,7 @@ import React from 'react';
 import { GameContext, GameContextValue } from './App';
 import ChessBoard from './ChessBoard';
 import Square from './Square';
-import { Color, PieceType, Piece, Position, Move } from '../engine/types';
+import { Color, PieceType, Piece, Move } from '../engine/types';
 import { initializeBoard } from '../engine/board';
 import { GameStatus, Difficulty } from '../game/types';
 import { GameState } from '../game/types';

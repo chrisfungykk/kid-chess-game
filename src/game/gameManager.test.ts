@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   startNewGame,
   restartGame,
@@ -8,7 +8,7 @@ import {
   getGameState,
 } from './gameManager';
 import { Difficulty, GameStatus } from './types';
-import { Color, PieceType } from '../engine/types';
+import { Color } from '../engine/types';
 
 // Mock localStorage for persistence
 const localStorageMock = (() => {
@@ -234,7 +234,6 @@ describe('GameManager', () => {
     });
 
     it('should deduct score for hint usage', () => {
-      const stateBefore = getGameState();
       requestHint();
       const stateAfter = getGameState();
       // Score should be 0 since we start at 0 and floor is 0

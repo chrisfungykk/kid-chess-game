@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { executeMove, simulateMove } from './execute';
 import { initializeBoard, cloneBoard } from './board';
-import { Board, Color, Move, PieceType, Piece } from './types';
+import { Board, Color, Move, PieceType } from './types';
 
 /**
  * Helper: create an empty board with just the pieces we need.
@@ -326,8 +326,7 @@ describe('executeMove', () => {
       placePiece(board, 7, 0, PieceType.ROOK, Color.WHITE);
       placePiece(board, 0, 4, PieceType.KING, Color.BLACK);
 
-      // Move rook to e-file to give check along the file
-      const move: Move = { from: { row: 7, col: 0 }, to: { row: 7, col: 4 }, promotion: null };
+      // Move rook to e-file to give check along the file — but king is in the way.
       // King must move out of the way first — let's use a different setup
       const board2 = emptyBoard();
       placePiece(board2, 7, 0, PieceType.KING, Color.WHITE);

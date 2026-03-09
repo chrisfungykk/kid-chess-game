@@ -4,7 +4,7 @@ import { generateHint } from './hintSystem';
 import { initializeBoard } from '../engine/board';
 import { getAllLegalMoves } from '../engine/moves';
 import { simulateMove } from '../engine/execute';
-import { Board, Color, Move } from '../engine/types';
+import { Color, Move } from '../engine/types';
 
 /**
  * Property 7: AI and Hint Move Legality (Hint)

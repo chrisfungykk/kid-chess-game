@@ -35,6 +35,9 @@ describe('Integration: Full game flow', () => {
     const App = await freshApp();
     render(<App />);
 
+    // Navigate to chess from game selector
+    fireEvent.click(screen.getByTestId('select-chess'));
+
     // 1. Game starts as NOT_STARTED — Play buttons visible
     expect(screen.getByTestId('play-easy-btn')).toBeInTheDocument();
 
@@ -118,6 +121,9 @@ describe('Integration: Hint flow', () => {
     const App = await freshApp();
     render(<App />);
 
+    // Navigate to chess from game selector
+    fireEvent.click(screen.getByTestId('select-chess'));
+
     // Start the game
     fireEvent.click(screen.getByTestId('play-easy-btn'));
 
@@ -167,6 +173,9 @@ describe('Integration: Restart flow', () => {
     const App = await freshApp();
     render(<App />);
 
+    // Navigate to chess from game selector
+    fireEvent.click(screen.getByTestId('select-chess'));
+
     // Start the game
     fireEvent.click(screen.getByTestId('play-easy-btn'));
 
@@ -215,6 +224,9 @@ describe('Integration: Language switch flow', () => {
   it('render app → verify English → toggle to Chinese → verify Chinese → toggle back → verify English', async () => {
     const App = await freshApp();
     render(<App />);
+
+    // Navigate to chess from game selector
+    fireEvent.click(screen.getByTestId('select-chess'));
 
     // 1. Verify English text is displayed
     const title = screen.getByRole('heading');

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Board, Color, PieceType, Position, Move } from './types';
+import { Board, Color, PieceType, Move } from './types';
 import { initializeBoard } from './board';
 import {
   generatePawnMoves,

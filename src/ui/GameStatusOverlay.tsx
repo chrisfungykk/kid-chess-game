@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGameContext } from './App';
 import { GameStatus } from '../game/types';
-import { Color } from '../engine/types';
+
 
 /**
  * GameStatusOverlay — kid-friendly overlay for checkmate, stalemate, draw,
