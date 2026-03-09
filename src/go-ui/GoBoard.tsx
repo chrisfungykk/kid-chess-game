@@ -78,20 +78,12 @@ export default function GoBoard({
             const territory = getTerritoryOwner(row, col);
             const territoryStyle = getTerritoryOverlay(territory);
 
-            // Grid-line borders: each cell draws its right and bottom line.
-            // First row/col also draws top/left.
-            const cellBorders: React.CSSProperties = {
-              borderRight: col < BOARD_SIZE - 1 ? '1px solid #6b4c2a' : 'none',
-              borderBottom: row < BOARD_SIZE - 1 ? '1px solid #6b4c2a' : 'none',
-            };
-
             return (
               <div
                 key={`${row}-${col}`}
                 data-testid={`intersection-${row}-${col}`}
                 style={{
                   ...styles.cell,
-                  ...cellBorders,
                   cursor: canInteract && !occupied ? 'pointer' : 'default',
                 }}
                 onClick={() => handleClick(row, col)}
@@ -151,19 +143,16 @@ const styles: Record<string, React.CSSProperties> = {
   wrapper: {
     width: '100%',
     maxWidth: '480px',
-    aspectRatio: '1',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    margin: '0 auto',
     fontFamily: '"Comic Sans MS", "Chalkboard SE", "Marker Felt", cursive, sans-serif',
   },
   board: {
     display: 'grid',
     gridTemplateColumns: `repeat(${BOARD_SIZE}, 1fr)`,
-    gridTemplateRows: `repeat(${BOARD_SIZE}, 1fr)`,
+    gap: '1px',
     width: '100%',
-    height: '100%',
-    backgroundColor: '#DEB887',
+    boxSizing: 'border-box' as const,
+    backgroundColor: '#6b4c2a',
     borderRadius: '12px',
     overflow: 'hidden',
     boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
@@ -176,6 +165,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     aspectRatio: '1',
+    backgroundColor: '#DEB887',
   },
   stoneContainer: {
     position: 'absolute' as const,

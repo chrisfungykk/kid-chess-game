@@ -303,10 +303,6 @@ const styles: Record<string, React.CSSProperties> = {
   boardArea: {
     width: '100%',
     maxWidth: '480px',
-    aspectRatio: '1',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: '12px',
   },
   langBtn: {
